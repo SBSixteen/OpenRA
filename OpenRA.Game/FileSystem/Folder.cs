@@ -32,7 +32,9 @@ namespace OpenRA.FileSystem
 			get
 			{
 				// Order may vary on different file systems and it matters for hashing.
-				return Directory.GetFiles(Name, "*", SearchOption.TopDirectoryOnly)
+				return new DirectoryInfo(Name).GetFiles()
+					.Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
+					.Select(f => f.Name)
 					.Concat(Directory.GetDirectories(Name))
 					.Select(Path.GetFileName)
 					.OrderBy(f => f);
